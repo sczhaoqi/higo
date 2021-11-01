@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	_ "github.com/go-sql-driver/mysql"
+	"higo/src/main/repository"
 	"net/http"
 	"strconv"
 )
@@ -19,7 +21,13 @@ func main() {
 		c.HTML(http.StatusOK, "hello", hello())
 	})
 	r.GET("/users", func(c *gin.Context) {
-		c.JSON(http.StatusOK, users)
+		users, err := repository.ListHandler()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, err)
+		} else {
+			c.JSON(http.StatusOK, users)
+		}
+
 	})
 	r.GET("/users/:id", func(c *gin.Context) {
 		//var user User
